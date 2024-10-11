@@ -13,13 +13,132 @@ class MyApp extends StatelessWidget {
       title: 'Zoo Store',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        fontFamily: 'Roboto',
       ),
-      home: StoreScreen(),
+      home: AuthScreen(), // Стартовая страница - экран авторизации
+    );
+  }
+}
+// Экран авторизации
+
+// Экран авторизации/регистрации
+class AuthScreen extends StatefulWidget {
+  @override
+  _AuthScreenState createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  bool isLogin = true; // Переключение между регистрацией и авторизацией
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  String? _errorMessage;
+
+  Future<void> authenticate(BuildContext context) async {
+    final url = isLogin
+        ? 'http://localhost:3000/login'
+        : 'http://localhost:3000/register';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email': emailController.text,
+          'password': passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final token = responseData['token'];
+        // Переход на основной экран и передача токена
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => StoreScreen(token: token)),
+        );
+      } else {
+        setState(() {
+          _errorMessage = json.decode(response.body)['error'];
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Ошибка подключения к серверу';
+      });
+    }
+  }
+
+  void toggleAuthMode() {
+    setState(() {
+      isLogin = !isLogin;
+      _errorMessage = null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(isLogin ? 'Авторизация' : 'Регистрация'),
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              isLogin ? 'Войдите в аккаунт' : 'Создайте аккаунт',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            if (_errorMessage != null)
+              Text(
+                _errorMessage!,
+                style: TextStyle(color: Colors.red),
+              ),
+            SizedBox(height: 10),
+            TextField(
+              controller: emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 16),
+            TextField(
+              controller: passwordController,
+              decoration: InputDecoration(
+                labelText: 'Пароль',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => authenticate(context),
+              child: Text(isLogin ? 'Войти' : 'Зарегистрироваться'),
+            ),
+            TextButton(
+              onPressed: toggleAuthMode,
+              child: Text(
+                  isLogin ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
+
+// Основной экран приложения с передачей токена
 class StoreScreen extends StatefulWidget {
+  final String token;
+
+  StoreScreen({required this.token});
+
   @override
   _StoreScreenState createState() => _StoreScreenState();
 }
@@ -37,13 +156,16 @@ class _StoreScreenState extends State<StoreScreen> {
       HomePage(),
       CategoryList(onAddToCart: _addToCart),
       CartScreen(cart: cart, onUpdateCart: _updateCart, onRemoveFromCart: _removeFromCart),
-      UserProfile(),
+      UserProfile(token: widget.token),
     ];
   }
 
+  // Добавление товара в корзину
   void _addToCart(Product product) {
     setState(() {
-      var existingItem = cart.firstWhere((item) => item.product == product, orElse: () => CartItem(product: product, quantity: 0));
+      var existingItem = cart.firstWhere(
+              (item) => item.product == product,
+          orElse: () => CartItem(product: product, quantity: 0));
       if (existingItem.quantity == 0) {
         cart.add(CartItem(product: product, quantity: 1));
       } else {
@@ -52,18 +174,21 @@ class _StoreScreenState extends State<StoreScreen> {
     });
   }
 
+  // Обновление количества товара в корзине
   void _updateCart(Product product, int quantity) {
     setState(() {
       cart.firstWhere((item) => item.product == product).quantity = quantity;
     });
   }
 
+  // Удаление товара из корзины
   void _removeFromCart(Product product) {
     setState(() {
       cart.removeWhere((item) => item.product == product);
     });
   }
 
+  // Управление переключением вкладок навигации
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -74,9 +199,15 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Zoo Store'),
+        title: Text('Zoo Store', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.blueAccent,
+        elevation: 0,
       ),
-      body: _widgetOptions[_selectedIndex],
+      body: AnimatedSwitcher(
+        duration: Duration(milliseconds: 500),
+        child: _widgetOptions[_selectedIndex],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -97,20 +228,49 @@ class _StoreScreenState extends State<StoreScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
         onTap: _onItemTapped,
       ),
     );
   }
 }
 
+
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        'Добро пожаловать в Zoo Store!',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Добро пожаловать в Zoo Store!',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {},
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                child: Text(
+                  'Начать покупки',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -149,6 +309,46 @@ class Category {
     return Category(
       id: json['id'],
       name: json['name'],
+    );
+  }
+}
+
+class FadeSlideTransition extends StatelessWidget {
+  final AnimationController controller;
+  final int index;
+  final Widget child;
+
+  FadeSlideTransition({
+    required this.controller,
+    required this.index,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Animation<double> fadeAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Interval((index / 10), 1.0, curve: Curves.easeOut),
+      ),
+    );
+
+    final Animation<Offset> slideAnimation = Tween(
+      begin: Offset(0, 0.1),
+      end: Offset(0, 0),
+    ).animate(
+      CurvedAnimation(
+        parent: controller,
+        curve: Interval((index / 10), 1.0, curve: Curves.easeOut),
+      ),
+    );
+
+    return FadeTransition(
+      opacity: fadeAnimation,
+      child: SlideTransition(
+        position: slideAnimation,
+        child: child,
+      ),
     );
   }
 }
@@ -212,16 +412,17 @@ class CategoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      elevation: 5,
+      margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(15.0),
       ),
       child: ListTile(
         title: Text(
           categoryName,
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
-        leading: Icon(Icons.pets, color: Colors.blue),
+        leading: Icon(Icons.pets, color: Colors.blueAccent, size: 30),
         trailing: Icon(Icons.arrow_forward_ios),
         onTap: onTap,
       ),
@@ -260,7 +461,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Продукты'),
+        title: Text('Продукты', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.blueAccent,
       ),
       body: ListView.builder(
         itemCount: products.length,
@@ -300,19 +502,23 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      elevation: 3,
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(12.0),
         child: Row(
           children: [
-            Image.network(
-              imageUrl,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(
+                imageUrl,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
             ),
             SizedBox(width: 16.0),
             Expanded(
@@ -325,7 +531,7 @@ class ProductCard extends StatelessWidget {
                   ),
                   SizedBox(height: 8.0),
                   Text(
-                    price,
+                    price + ' ₽',
                     style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                 ],
@@ -337,7 +543,6 @@ class ProductCard extends StatelessWidget {
     );
   }
 }
-
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
   final Function(Product) onAddToCart;
@@ -348,23 +553,27 @@ class ProductDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.title),
+        title: Text(product.title, style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.network(
-              product.imageUrl,
-              width: double.infinity,
-              height: 300,
-              fit: BoxFit.cover,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12.0),
+              child: Image.network(
+                product.imageUrl,
+                width: double.infinity,
+                height: 300,
+                fit: BoxFit.cover,
+              ),
             ),
             SizedBox(height: 20),
             Text(
               product.title,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blueAccent),
             ),
             SizedBox(height: 20),
             Text(
@@ -373,6 +582,10 @@ class ProductDetailScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               onPressed: () {
                 onAddToCart(product);
                 Navigator.pop(context);
@@ -380,7 +593,13 @@ class ProductDetailScreen extends StatelessWidget {
                   SnackBar(content: Text('Товар добавлен в корзину')),
                 );
               },
-              child: Text('Добавить в корзину'),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                child: Text(
+                  'Добавить в корзину',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         ),
@@ -400,7 +619,8 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Корзина'),
+        title: Text('Корзина', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.blueAccent,
       ),
       body: cart.isEmpty
           ? Center(
@@ -434,21 +654,25 @@ class CartProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      elevation: 3,
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
             Row(
               children: [
-                Image.network(
-                  cartItem.product.imageUrl,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Image.network(
+                    cartItem.product.imageUrl,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 SizedBox(width: 16.0),
                 Expanded(
@@ -507,9 +731,35 @@ class CartProductCard extends StatelessWidget {
   }
 }
 
-class UserProfile extends StatefulWidget {
+class UserProfile extends StatelessWidget {
+  final String token;
+
+  UserProfile({required this.token});
+
   @override
-  _UserProfileState createState() => _UserProfileState();
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Профиль пользователя',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Ваш токен: $token',
+              style: TextStyle(fontSize: 16, color: Colors.black87),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _UserProfileState extends State<UserProfile> {
@@ -534,41 +784,61 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Профиль',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 20.0),
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: 'Имя',
-              border: OutlineInputBorder(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Профиль', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Профиль',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-          ),
-          SizedBox(height: 16.0),
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(
-              labelText: 'Email',
-              border: OutlineInputBorder(),
+            SizedBox(height: 20.0),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Имя',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.blue[50],
+              ),
             ),
-          ),
-          SizedBox(height: 16.0),
-          ElevatedButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Данные профиля сохранены')),
-              );
-            },
-            child: Text('Сохранить'),
-          ),
-        ],
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.blue[50],
+              ),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Данные профиля сохранены')),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                child: Text(
+                  'Сохранить',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
