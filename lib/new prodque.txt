@@ -1,0 +1,43 @@
+select * from users;
+select * from cart_items;
+select * from categories;
+select * from products;
+
+CREATE TABLE cart_items (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  product_id INT REFERENCES products(id) ON DELETE CASCADE,
+  quantity INT NOT NULL
+);
+
+CREATE TABLE products (
+  id SERIAL PRIMARY KEY,              -- Уникальный идентификатор продукта (auto-increment)
+  name VARCHAR(255) NOT NULL,          -- Название продукта
+  price NUMERIC(10, 2) NOT NULL,       -- Цена продукта
+  category_id INT NOT NULL,            -- Внешний ключ на таблицу категорий
+  imageUrl TEXT                        -- Ссылка на изображение продукта
+);
+
+-- Заново создаем внешнее ограничение на таблицу cart_items
+ALTER TABLE cart_items
+ADD CONSTRAINT cart_items_product_id_fkey
+FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE;
+
+
+
+
+ALTER TABLE products
+ADD CONSTRAINT fk_category
+FOREIGN KEY (category_id) REFERENCES categories(id)
+ON DELETE CASCADE;
+
+-- Добавляем индексы для ускорения поиска по полям name и category_id
+CREATE INDEX idx_products_name ON products (name);
+CREATE INDEX idx_products_category_id ON products (category_id);
+
+-- Пример вставки продуктов в таблицу
+INSERT INTO products (name, price, category_id, imageUrl)
+VALUES
+('Product 1', 100.00, 1, 'https://example.com/image1.jpg'),
+('Product 2', 150.50, 1, 'https://example.com/image2.jpg'),
+('Product 3', 200.99, 2, 'https://example.com/image3.jpg');

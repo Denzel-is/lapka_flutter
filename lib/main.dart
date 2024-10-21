@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'Roboto',
       ),
+
       home: AuthScreen(), // Стартовая страница - экран авторизации
     );
   }
@@ -142,11 +143,9 @@ class StoreScreen extends StatefulWidget {
   @override
   _StoreScreenState createState() => _StoreScreenState();
 }
-
 class _StoreScreenState extends State<StoreScreen> {
   int _selectedIndex = 0;
   List<CartItem> cart = [];
-
   static List<Widget> _widgetOptions = [];
 
   @override
@@ -158,34 +157,84 @@ class _StoreScreenState extends State<StoreScreen> {
       CartScreen(cart: cart, onUpdateCart: _updateCart, onRemoveFromCart: _removeFromCart),
       UserProfile(token: widget.token),
     ];
+    _loadCart();  // Загрузка корзины из базы данных
+  }
+
+  // Загрузка товаров в корзине пользователя
+  Future<void> _loadCart() async {
+    final url = 'http://localhost:3000/cart';  // URL вашего сервера
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer ${widget.token}'},  // Токен для авторизации
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> cartItems = json.decode(response.body);
+      setState(() {
+        cart = cartItems.map((item) => CartItem(
+          product: Product(
+            id: item['id'],
+            imageUrl: '',
+            title: item['title'],
+            price: item['price'].toString(),
+          ),
+          quantity: item['quantity'],
+        )).toList();
+      });
+    }
   }
 
   // Добавление товара в корзину
-  void _addToCart(Product product) {
-    setState(() {
-      var existingItem = cart.firstWhere(
-              (item) => item.product == product,
-          orElse: () => CartItem(product: product, quantity: 0));
-      if (existingItem.quantity == 0) {
-        cart.add(CartItem(product: product, quantity: 1));
-      } else {
-        existingItem.quantity++;
-      }
-    });
+  Future<void> _addToCart(Product product) async {
+    final url = 'http://localhost:3000/cart';  // URL вашего сервера
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer ${widget.token}',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'productId': product.id,
+        'quantity': 1,  // Добавляем 1 товар
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      _loadCart(); // Обновляем корзину после добавления товара
+    }
   }
 
   // Обновление количества товара в корзине
-  void _updateCart(Product product, int quantity) {
-    setState(() {
-      cart.firstWhere((item) => item.product == product).quantity = quantity;
-    });
+  Future<void> _updateCart(Product product, int quantity) async {
+    final url = 'http://localhost:3000/cart';  // URL вашего сервера
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer ${widget.token}',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'productId': product.id,
+        'quantity': quantity,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      _loadCart(); // Обновляем корзину после обновления количества товара
+    }
   }
 
   // Удаление товара из корзины
-  void _removeFromCart(Product product) {
-    setState(() {
-      cart.removeWhere((item) => item.product == product);
-    });
+  Future<void> _removeFromCart(Product product) async {
+    final url = 'http://localhost:3000/cart/${product.id}';  // URL вашего сервера
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer ${widget.token}'},  // Токен для авторизации
+    );
+
+    if (response.statusCode == 200) {
+      _loadCart(); // Обновляем корзину после удаления товара
+    }
   }
 
   // Управление переключением вкладок навигации
@@ -275,26 +324,28 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
 class Product {
+  final int id;
   final String imageUrl;
   final String title;
   final String price;
 
-  Product({required this.imageUrl, required this.title, required this.price});
+  Product({required this.id, required this.imageUrl, required this.title, required this.price});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
+      id: json['id'],
       imageUrl: json['image_url'],
-      title: json['name'],
-      price: json['price'].toString(),
+      title: json['title'],
+      price: json['price'],
     );
   }
 }
 
+
 class CartItem {
   final Product product;
-  int quantity;
+  int? quantity ;
 
   CartItem({required this.product, required this.quantity});
 }
@@ -352,7 +403,6 @@ class FadeSlideTransition extends StatelessWidget {
     );
   }
 }
-
 class CategoryList extends StatefulWidget {
   final Function(Product) onAddToCart;
 
@@ -438,10 +488,9 @@ class ProductListScreen extends StatefulWidget {
 
   @override
   _ProductListScreenState createState() => _ProductListScreenState();
-}
-
-class _ProductListScreenState extends State<ProductListScreen> {
+}class _ProductListScreenState extends State<ProductListScreen> {
   List<Product> products = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -449,12 +498,26 @@ class _ProductListScreenState extends State<ProductListScreen> {
     _loadProducts();
   }
 
-  _loadProducts() async {
-    final response = await http.get(Uri.parse('http://localhost:3000/categories/${widget.categoryId}/products'));
-    final List<dynamic> data = json.decode(response.body);
-    setState(() {
-      products = data.map((json) => Product.fromJson(json)).toList();
-    });
+  Future<void> _loadProducts() async {
+    try {
+      final response = await http.get(Uri.parse('http://localhost:3000/categories/${widget.categoryId}/products'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+
+        setState(() {
+          products = data.map((json) => Product.fromJson(json)).toList();
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Ошибка загрузки продуктов');
+      }
+    } catch (error) {
+      print('Ошибка: $error');
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -464,7 +527,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
         title: Text('Продукты', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.blueAccent,
       ),
-      body: ListView.builder(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : products.isEmpty
+          ? Center(child: Text('Продукты не найдены'))
+          : ListView.builder(
         itemCount: products.length,
         itemBuilder: (context, index) {
           final product = products[index];
@@ -485,6 +552,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               title: product.title,
               price: product.price,
             ),
+
           );
         },
       ),
@@ -587,11 +655,20 @@ class ProductDetailScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               onPressed: () {
-                onAddToCart(product);
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Товар добавлен в корзину')),
-                );
+
+                if (product.price != null && product.title != null) {
+
+                  onAddToCart(product);
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Товар добавлен в корзину')),
+                  );
+                } else {
+                  // Логика для обработки ошибки
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Ошибка: Некорректные данные продукта')),
+                  );
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
@@ -696,8 +773,8 @@ class CartProductCard extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.remove),
                       onPressed: () {
-                        if (cartItem.quantity > 1) {
-                          onUpdateCart(cartItem.product, cartItem.quantity - 1);
+                        if (cartItem.quantity! > 1) {
+                          onUpdateCart(cartItem.product, cartItem.quantity! - 1);
                         }
                       },
                     ),
@@ -705,7 +782,7 @@ class CartProductCard extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
-                        onUpdateCart(cartItem.product, cartItem.quantity + 1);
+                        onUpdateCart(cartItem.product, cartItem.quantity! + 1);
                       },
                     ),
                   ],
@@ -731,10 +808,12 @@ class CartProductCard extends StatelessWidget {
   }
 }
 
-class UserProfile extends StatelessWidget {
+class UserProfile extends StatefulWidget {
   final String token;
 
   UserProfile({required this.token});
+  @override
+  _UserProfileState createState() => _UserProfileState();
 
   @override
   Widget build(BuildContext context) {
