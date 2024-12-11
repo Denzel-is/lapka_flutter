@@ -789,6 +789,7 @@ class CartProductCard extends StatelessWidget {
                 ),
               ],
             ),
+
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
