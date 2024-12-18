@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const app = express();
 app.use(cors());
@@ -19,6 +20,67 @@ const pool = new Pool({
 
 // Секретный ключ для JWT
 const jwtSecret = 'ertyuiokjhgfdrtyuioll51254hbgvbnhy5145';
+
+// Маршрут для регистрации нового пользователя
+app.post('/register', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Проверка на существование пользователя с таким email
+    const existingUser = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ error: 'Пользователь с таким email уже существует' });
+    }
+
+    // Хэширование пароля
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Добавление нового пользователя в базу данных
+    const result = await pool.query(
+      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *',
+      [email, hashedPassword]
+    );
+
+    const user = result.rows[0];
+
+    // Создание токена
+    const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: '1h' });
+
+    res.status(201).json({ token });
+  } catch (error) {
+    console.error('Ошибка регистрации:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+// Маршрут для авторизации пользователя
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Проверка существования пользователя
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Неверные email или пароль' });
+    }
+
+    const user = result.rows[0];
+
+    // Проверка пароля
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Неверные email или пароль' });
+    }
+
+    // Создание токена
+    const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: '1h' });
+
+    res.json({ token });
+  } catch (error) {
+    console.error('Ошибка входа:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
 
 // Маршрут для получения всех категорий
 app.get('/categories', async (req, res) => {
