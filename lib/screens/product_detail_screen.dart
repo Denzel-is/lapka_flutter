@@ -5,59 +5,60 @@ class ProductDetailScreen extends StatelessWidget {
   final Product product;
   final Function(Product) onAddToCart;
 
-  ProductDetailScreen({required this.product, required this.onAddToCart});
+  const ProductDetailScreen({
+    Key? key,
+    required this.product,
+    required this.onAddToCart,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.title, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(product.title),
         backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
-              child: Image.network(
-                product.imageUrl,
-                width: double.infinity,
-                height: 300,
-                fit: BoxFit.cover,
+            Image.network(
+              product.imageUrl,
+              height: 200,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.broken_image,
+                size: 200,
+                color: Colors.grey,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 16.0),
             Text(
               product.title,
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 8.0),
             Text(
               '${product.price} ₽',
-              style: TextStyle(fontSize: 24, color: Colors.green),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.green,
               ),
+            ),
+            const SizedBox(height: 16.0),
+            ElevatedButton(
               onPressed: () {
                 onAddToCart(product);
-                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Товар добавлен в корзину')),
+                  const SnackBar(content: Text('Товар добавлен в корзину!')),
                 );
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-                child: Text(
-                  'Добавить в корзину',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
+              child: const Text('Добавить в корзину'),
             ),
           ],
         ),

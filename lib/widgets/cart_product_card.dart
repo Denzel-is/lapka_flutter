@@ -7,13 +7,18 @@ class CartProductCard extends StatelessWidget {
   final Function(Product, int) onUpdateCart;
   final Function(Product) onRemoveFromCart;
 
-  CartProductCard({required this.cartItem, required this.onUpdateCart, required this.onRemoveFromCart});
+  const CartProductCard({
+    Key? key,
+    required this.cartItem,
+    required this.onUpdateCart,
+    required this.onRemoveFromCart,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
@@ -32,16 +37,16 @@ class CartProductCard extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         cartItem.product.title,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 8.0),
+                      const SizedBox(height: 8.0),
                       Text(
                         '${cartItem.product.price} ₽',
                         style: TextStyle(fontSize: 16, color: Colors.grey[600]),
@@ -52,7 +57,7 @@ class CartProductCard extends StatelessWidget {
                 Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.remove),
+                      icon: const Icon(Icons.remove),
                       onPressed: () {
                         if (cartItem.quantity! > 1) {
                           onUpdateCart(cartItem.product, cartItem.quantity! - 1);
@@ -61,7 +66,7 @@ class CartProductCard extends StatelessWidget {
                     ),
                     Text(cartItem.quantity.toString()),
                     IconButton(
-                      icon: Icon(Icons.add),
+                      icon: const Icon(Icons.add),
                       onPressed: () {
                         onUpdateCart(cartItem.product, cartItem.quantity! + 1);
                       },
@@ -76,7 +81,7 @@ class CartProductCard extends StatelessWidget {
                 onPressed: () {
                   onRemoveFromCart(cartItem.product);
                 },
-                child: Text(
+                child: const Text(
                   'Удалить',
                   style: TextStyle(color: Colors.red),
                 ),

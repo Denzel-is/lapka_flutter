@@ -10,7 +10,11 @@ class ProductListScreen extends StatefulWidget {
   final int categoryId;
   final Function(Product) onAddToCart;
 
-  ProductListScreen({required this.categoryId, required this.onAddToCart});
+  const ProductListScreen({
+    Key? key,
+    required this.categoryId,
+    required this.onAddToCart,
+  }) : super(key: key);
 
   @override
   _ProductListScreenState createState() => _ProductListScreenState();
@@ -42,6 +46,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
       setState(() {
         isLoading = false;
       });
+      print('Ошибка: $error');
     }
   }
 
@@ -49,18 +54,22 @@ class _ProductListScreenState extends State<ProductListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Продукты', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Продукты', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.blueAccent,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : products.isEmpty
-          ? Center(child: Text('Продукты не найдены'))
+          ? const Center(child: Text('Продукты не найдены'))
           : ListView.builder(
         itemCount: products.length,
         itemBuilder: (context, index) {
           final product = products[index];
-          return GestureDetector(
+          return ProductCard(
+            imageUrl: product.imageUrl,
+            title: product.title,
+            price: product.price,
+            isInCart: product.isInCart,
             onTap: () {
               Navigator.push(
                 context,
@@ -72,11 +81,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 ),
               );
             },
-            child: ProductCard(
-              imageUrl: product.imageUrl,
-              title: product.title,
-              price: product.price,
-            ),
           );
         },
       ),

@@ -8,17 +8,22 @@ class CartScreen extends StatelessWidget {
   final Function(Product, int) onUpdateCart;
   final Function(Product) onRemoveFromCart;
 
-  CartScreen({required this.cart, required this.onUpdateCart, required this.onRemoveFromCart});
+  const CartScreen({
+    Key? key,
+    required this.cart,
+    required this.onUpdateCart,
+    required this.onRemoveFromCart,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Корзина', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Корзина', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.blueAccent,
       ),
       body: cart.isEmpty
-          ? Center(
+          ? const Center(
         child: Text(
           'Корзина пуста',
           style: TextStyle(fontSize: 24),

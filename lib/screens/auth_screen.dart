@@ -11,22 +11,22 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool isLogin = true;
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   String? _errorMessage;
 
   Future<void> authenticate(BuildContext context) async {
     final url = isLogin
-        ? 'http://localhost:3000/login'
-        : 'http://localhost:3000/register';
+        ? Uri.parse('http://localhost:3000/login')
+        : Uri.parse('http://localhost:3000/register');
 
     try {
       final response = await http.post(
-        Uri.parse(url),
+        url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'email': emailController.text,
-          'password': passwordController.text,
+          'email': emailController.text.trim(),
+          'password': passwordController.text.trim(),
         }),
       );
 
@@ -39,7 +39,7 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       } else {
         setState(() {
-          _errorMessage = json.decode(response.body)['error'];
+          _errorMessage = json.decode(response.body)['error'] ?? 'Неизвестная ошибка';
         });
       }
     } catch (e) {
@@ -57,6 +57,13 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -70,32 +77,33 @@ class _AuthScreenState extends State<AuthScreen> {
           children: [
             Text(
               isLogin ? 'Войдите в аккаунт' : 'Создайте аккаунт',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (_errorMessage != null)
               Text(
                 _errorMessage!,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               controller: emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(),
               ),
+              keyboardType: TextInputType.emailAddress,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             TextField(
               controller: passwordController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Пароль',
                 border: OutlineInputBorder(),
               ),
               obscureText: true,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => authenticate(context),
               child: Text(isLogin ? 'Войти' : 'Зарегистрироваться'),

@@ -3,14 +3,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../models/category.dart';
-import '../widgets/category_card.dart';
 import 'product_list_screen.dart';
 import '../models/product.dart';
 
 class CategoryListScreen extends StatefulWidget {
   final Function(Product) onAddToCart;
 
-  CategoryListScreen({required this.onAddToCart});
+  const CategoryListScreen({Key? key, required this.onAddToCart}) : super(key: key);
 
   @override
   _CategoryListScreenState createState() => _CategoryListScreenState();
@@ -42,6 +41,7 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
       setState(() {
         isLoading = false;
       });
+      print('Ошибка: $error');
     }
   }
 
@@ -49,22 +49,24 @@ class _CategoryListScreenState extends State<CategoryListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Категории', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Категории', style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.blueAccent,
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
         itemCount: categories.length,
         itemBuilder: (context, index) {
-          return CategoryCard(
-            categoryName: categories[index].name,
+          final category = categories[index];
+          return ListTile(
+            title: Text(category.name),
+            trailing: const Icon(Icons.arrow_forward),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => ProductListScreen(
-                    categoryId: categories[index].id,
+                    categoryId: category.id,
                     onAddToCart: widget.onAddToCart,
                   ),
                 ),
