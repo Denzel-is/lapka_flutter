@@ -1,96 +1,66 @@
-// widgets/product_card.dart
 import 'package:flutter/material.dart';
+import '../models/product_model.dart';
+import '../models/user_model.dart';
+import '../screens/dialogs.dart';
 
 class ProductCard extends StatelessWidget {
-  final String imageUrl; // URL изображения продукта
-  final String title;    // Название продукта
-  final String price;    // Цена продукта
-  final bool isInCart;   // Показывает, что продукт уже в корзине
+  final Product product;
+  final UserModel currentUser;
+  const ProductCard({super.key, required this.product, required this.currentUser});
 
-  /// Колбек, который вызываем при тапе (например, чтобы добавить в корзину).
-  final VoidCallback onTap;
-
-  const ProductCard({
-    Key? key,
-    required this.imageUrl,
-    required this.title,
-    required this.price,
-    this.isInCart = false,
-    required this.onTap,
-  }) : super(key: key);
+  void _showProductDetails(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => ProductDetailsDialog(
+        product: product,
+        currentUser: currentUser,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Изображение продукта
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: Image.network(
-                  imageUrl,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return const Icon(
-                      Icons.broken_image,
-                      size: 100,
-                      color: Colors.grey,
-                    );
-                  },
+    return InkWell(
+      onTap: () => _showProductDetails(context),
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: Column(
+          children: [
+            Expanded(
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                product.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(width: 16.0),
-              // Текстовая информация о продукте
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Название продукта
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    // Цена продукта
-                    Text(
-                      '$price ₽',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.green,
-                      ),
-                    ),
-                  ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+              child: Text(
+                '${product.price.toStringAsFixed(0)} тг',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.deepPurple,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              // Иконка "Добавить в корзину" или "Уже в корзине"
-              Icon(
-                isInCart ? Icons.check_circle : Icons.add_shopping_cart,
-                color: isInCart ? Colors.green : Colors.grey,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

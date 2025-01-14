@@ -203,22 +203,22 @@ List<Category> mockCategories = [
   Category(
     id: 'cat1',
     name: 'Корма',
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/JhZ6VGF3/korm1.png',
   ),
   Category(
     id: 'cat2',
     name: 'Игрушки',
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/W4L8ns4d/igruskka1.jpg',
   ),
   Category(
     id: 'cat3',
     name: 'Уход и гигиена',
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/tJMtVjfC/hair1.jpg',
   ),
   Category(
     id: 'cat4',
     name: 'Одежда',
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/XqmdYgGr/kurt3.jpg',
   ),
 ];
 
@@ -232,7 +232,7 @@ List<Product> mockProducts = [
     name: 'Сухой корм для кошек',
     description: 'Сухой корм, 2 кг, для взрослых кошек.',
     price: 2200.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/JhZ6VGF3/korm1.png',
   ),
   Product(
     id: 'prod2',
@@ -240,7 +240,7 @@ List<Product> mockProducts = [
     name: 'Влажный корм для собак',
     description: 'Консервы с мясом и овощами, 400 г.',
     price: 580.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/02jV5t3y/korm2.jpg',
   ),
   Product(
     id: 'prod3',
@@ -248,7 +248,7 @@ List<Product> mockProducts = [
     name: 'Игрушка "Мышка"',
     description: 'Мягкая игрушка для кошек.',
     price: 800.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/W4L8ns4d/igruskka1.jpg',
   ),
   Product(
     id: 'prod4',
@@ -256,7 +256,7 @@ List<Product> mockProducts = [
     name: 'Мячик с пищалкой',
     description: 'Резиновый мячик, пищит.',
     price: 1000.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/8CRHXxFt/igruskka2.jpg',
   ),
   Product(
     id: 'prod5',
@@ -264,7 +264,7 @@ List<Product> mockProducts = [
     name: 'Шампунь для собак',
     description: 'Бережный уход за шерстью.',
     price: 1200.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/tJMtVjfC/hair1.jpg',
   ),
   Product(
     id: 'prod6',
@@ -272,7 +272,7 @@ List<Product> mockProducts = [
     name: 'Сухой корм для собак',
     description: '3 кг, для взрослых собак.',
     price: 3000.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/HsNBrwD4/korm3.jpg',
   ),
   Product(
     id: 'prod7',
@@ -280,7 +280,7 @@ List<Product> mockProducts = [
     name: 'Средство для чистки ушей',
     description: 'Безопасный лосьон для питомцев.',
     price: 1500.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/nh7YMN1p/hair2.jpg',
   ),
   Product(
     id: 'prod8',
@@ -288,7 +288,7 @@ List<Product> mockProducts = [
     name: 'Зубная щётка для собак',
     description: 'Для гигиены ротовой полости.',
     price: 700.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/X7tkjnds/hair3.jpg',
   ),
   Product(
     id: 'prod9',
@@ -296,7 +296,7 @@ List<Product> mockProducts = [
     name: 'Плюшевая игрушка',
     description: 'Большая мягкая игрушка для собак.',
     price: 2300.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/mDTSvVCR/igruskka3.jpg',
   ),
   Product(
     id: 'prod10',
@@ -304,7 +304,7 @@ List<Product> mockProducts = [
     name: 'Курточка для собак',
     description: 'Тёплая куртка, размер M.',
     price: 4500.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/wvxhfMYj/kurt1.jpg',
   ),
   Product(
     id: 'prod11',
@@ -312,7 +312,7 @@ List<Product> mockProducts = [
     name: 'Кофточка для кошек',
     description: 'Свитерок для кошек, размер S.',
     price: 2200.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/6qyCKP3s/kurt2.jpg',
   ),
   Product(
     id: 'prod12',
@@ -320,7 +320,7 @@ List<Product> mockProducts = [
     name: 'Комбинезон для собак',
     description: 'Лёгкий, для дождливой погоды.',
     price: 3900.0,
-    imageUrl: 'https://i.postimg.cc/kXy4RVx1/item.png',
+    imageUrl: 'https://i.postimg.cc/XqmdYgGr/kurt3.jpg',
   ),
 ];
 
@@ -328,27 +328,22 @@ final mockPromos = [
   {
     'title': 'Скидка 10% на корма',
     'desc': 'Только до конца недели!',
-    'imageUrl': 'https://i.postimg.cc/kXy4RVx1/item.png',
+    'imageUrl': 'https://i.postimg.cc/KvTg5B35/act1.png',
   },
   {
-    'title': 'Игрушки 2+1=3',
+    'title': 'Игрушки 1+1=3',
     'desc': 'Купи две — получи третью в подарок!',
-    'imageUrl': 'https://i.postimg.cc/kXy4RVx1/item.png',
+    'imageUrl': 'https://i.postimg.cc/9Qjwg0GH/act2.jpg',
   },
   {
     'title': 'Скидка 15% для постоянных клиентов',
     'desc': 'Подробности уточняйте в профиле',
-    'imageUrl': 'https://i.postimg.cc/kXy4RVx1/item.png',
-  },
-  {
-    'title': 'Шампунь в подарок',
-    'desc': 'При покупке корма для собак от 1000 тг',
-    'imageUrl': 'https://i.postimg.cc/kXy4RVx1/item.png',
+    'imageUrl': 'https://i.postimg.cc/sg9QkzcQ/act3.webp',
   },
   {
     'title': 'Одежда для питомцев',
     'desc': 'Коллекция осень-зима 2025!',
-    'imageUrl': 'https://i.postimg.cc/kXy4RVx1/item.png',
+    'imageUrl': 'https://i.postimg.cc/KY0KY5Cm/act4.png',
   },
 ];
 
@@ -1172,8 +1167,9 @@ class CategoriesPage extends StatelessWidget {
 }
 
 // ============================================================================
-// СПИСОК ТОВАРОВ
-class ProductsPage extends StatelessWidget {
+// СПИСОК ТОВАРОВ + ПОИСК ВНУТРИ КАТЕГОРИИ
+// ============================================================================
+class ProductsPage extends StatefulWidget {
   final Category category;
   final UserModel currentUser;
   const ProductsPage({
@@ -1183,13 +1179,68 @@ class ProductsPage extends StatelessWidget {
   });
 
   @override
+  State<ProductsPage> createState() => _ProductsPageState();
+}
+
+class _ProductsPageState extends State<ProductsPage> {
+  final _searchCtrl = TextEditingController();
+  late List<Product> _filteredProducts;
+
+  @override
+  void initState() {
+    super.initState();
+    // Сначала в списке все товары данной категории
+    _filteredProducts = mockProducts
+        .where((p) => p.categoryId == widget.category.id)
+        .toList();
+
+    _searchCtrl.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchCtrl.removeListener(_onSearchChanged);
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  // Обработка изменений поля поиска
+  void _onSearchChanged() {
+    final query = _searchCtrl.text.trim().toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        // Если поле пустое, показываем все товары категории
+        _filteredProducts = mockProducts
+            .where((p) => p.categoryId == widget.category.id)
+            .toList();
+      } else {
+        // Иначе фильтруем по названию (name)
+        _filteredProducts = mockProducts
+            .where((p) =>
+        p.categoryId == widget.category.id &&
+            p.name.toLowerCase().contains(query))
+            .toList();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final products = mockProducts.where((p) => p.categoryId == category.id);
     return Scaffold(
+      // Добавим AppBar с полем поиска
       appBar: AppBar(
-        title: Text(category.name),
+        title: TextField(
+          controller: _searchCtrl,
+          decoration: InputDecoration(
+            hintText: 'Поиск...',
+            border: InputBorder.none,
+            hintStyle: TextStyle(color: Colors.white54),
+          ),
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.deepPurple,
       ),
-      body: products.isEmpty
+      body: _filteredProducts.isEmpty
           ? Center(
         child: Text(
           'Товаров нет :(',
@@ -1198,18 +1249,19 @@ class ProductsPage extends StatelessWidget {
       )
           : GridView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: products.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        itemCount: _filteredProducts.length,
+        gridDelegate:
+        const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
           childAspectRatio: 0.7,
         ),
         itemBuilder: (context, index) {
-          final product = products.elementAt(index);
+          final product = _filteredProducts[index];
           return ProductCard(
             product: product,
-            currentUser: currentUser,
+            currentUser: widget.currentUser,
           );
         },
       ),
@@ -1360,7 +1412,8 @@ class ProductDetailsDialog extends StatelessWidget {
 }
 
 // ============================================================================
-// КОРЗИНА (супер красивый редизайн)
+// КОРЗИНА
+// ============================================================================
 class CartPage extends StatefulWidget {
   final UserModel currentUser;
   const CartPage({super.key, required this.currentUser});
@@ -1562,7 +1615,9 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
     Navigator.pop(context, 'ok');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Заказ (самовывоз) оформлен!\nИтог: ${sum.toStringAsFixed(0)} тг (с учётом акций)'),
+        content: Text(
+          'Заказ (самовывоз) оформлен!\nИтог: ${sum.toStringAsFixed(0)} тг (с учётом акций)',
+        ),
       ),
     );
   }
@@ -1600,7 +1655,9 @@ class _CheckoutDialogState extends State<CheckoutDialog> {
     Navigator.pop(context, 'ok');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Заказ (доставка) оформлен!\nИтог: ${sum.toStringAsFixed(0)} тг (с учётом акций)'),
+        content: Text(
+          'Заказ (доставка) оформлен!\nИтог: ${sum.toStringAsFixed(0)} тг (с учётом акций)',
+        ),
       ),
     );
   }
@@ -2134,7 +2191,8 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                 labelText: 'Старый пароль',
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
-                  icon: Icon(_obscureOld ? Icons.visibility_off : Icons.visibility),
+                  icon:
+                  Icon(_obscureOld ? Icons.visibility_off : Icons.visibility),
                   onPressed: () {
                     setState(() {
                       _obscureOld = !_obscureOld;
@@ -2152,7 +2210,8 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                 labelText: 'Новый пароль',
                 prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
-                  icon: Icon(_obscureNew1 ? Icons.visibility_off : Icons.visibility),
+                  icon: Icon(
+                      _obscureNew1 ? Icons.visibility_off : Icons.visibility),
                   onPressed: () {
                     setState(() {
                       _obscureNew1 = !_obscureNew1;
@@ -2170,7 +2229,8 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                 labelText: 'Повторите новый пароль',
                 prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
-                  icon: Icon(_obscureNew2 ? Icons.visibility_off : Icons.visibility),
+                  icon: Icon(
+                      _obscureNew2 ? Icons.visibility_off : Icons.visibility),
                   onPressed: () {
                     setState(() {
                       _obscureNew2 = !_obscureNew2;
