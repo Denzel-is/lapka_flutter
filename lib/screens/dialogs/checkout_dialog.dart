@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../models/models.dart';
+import '../../../models/user_model.dart';
 import '../../../data/mock_data.dart';
 import 'delivery_form_dialog.dart';
-
+import '../../../models/order_model.dart';
 class CheckoutDialog extends StatefulWidget {
   final UserModel user;
   const CheckoutDialog({super.key, required this.user});

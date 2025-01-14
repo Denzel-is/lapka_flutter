@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../models/product_model.dart';
 import '../data/mock_data.dart';
-import 'dialogs.dart';
+import '../screens/dialogs/checkout_dialog.dart';
 
 class CartPage extends StatefulWidget {
   final UserModel currentUser;

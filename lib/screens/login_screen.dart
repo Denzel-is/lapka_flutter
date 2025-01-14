@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/mock_data.dart';
 import '../models/user_model.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final void Function(UserModel user, bool rememberMe) onLoginSuccess;
@@ -29,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
     final user = mockUsersDb.firstWhere(
-          (u) => u.email == email && u.password == pass,
+      (u) => u?.email == email && u?.password == pass,
       orElse: () => UserModel(
         email: '',
         password: '',
@@ -192,11 +193,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class RegisterScreen extends StatefulWidget {
-  final void Function(UserModel, bool) onRegisterSuccess;
+extension on Object? {
+  get email => null;
 
-  const RegisterScreen({super.key, required this.onRegisterSuccess});
-
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  get password => null;
 }
+
+

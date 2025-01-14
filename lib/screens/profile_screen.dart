@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../models/order_model.dart';
-import 'dialogs.dart';
-
+import '../screens/dialogs/change_password_dialog.dart';
+import '../screens/dialogs/order_details_dialog.dart';
 // Маски (для карты)
 String maskCardNumber(String cardNumber) {
   if (cardNumber.isEmpty) return 'Не указана';

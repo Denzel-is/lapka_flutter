@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../models/models.dart';
+import '../../../models/product_model.dart';
+import '../../../models/user_model.dart';
 import '../../../data/mock_data.dart';
 
 class ProductDetailsDialog extends StatelessWidget {

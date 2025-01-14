@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/mock_data.dart';
 import '../models/user_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   final void Function(UserModel, bool) onRegisterSuccess;
@@ -54,7 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    final alreadyExists = mockUsersDb.any((u) => u.email == email);
+    final alreadyExists = mockUsersDb.any((u) => u?.email == email);
     if (alreadyExists) {
       setState(() {
         _errorMsg = 'Пользователь с таким email уже существует';
@@ -232,4 +232,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+}
+
+extension on Object? {
+  get email => null;
 }

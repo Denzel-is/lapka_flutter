@@ -1,6 +1,7 @@
 import 'product_model.dart';
 import 'order_model.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 class UserModel {
   String email;
   String password;
@@ -43,6 +44,13 @@ class UserModel {
       'address': address,
       'orders': orders.map((o) => o.toMap()).toList(),
     };
+  }
+
+  Future<void> saveToDb() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userMap = toMap(); // Преобразование в Map
+    final userJson = jsonEncode(userMap); // Сериализация в JSON
+    await prefs.setString('user_${email}', userJson);
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {

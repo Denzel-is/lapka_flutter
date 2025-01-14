@@ -24,7 +24,7 @@ class _ProductsPageState extends State<ProductsPage> {
   void initState() {
     super.initState();
     filteredProducts = mockProducts
-        .where((p) => p.categoryId == widget.category.id)
+        .where((p) => p?.categoryId == widget.category.id)
         .toList();
     _searchCtrl.addListener(_onSearchChanged);
   }
@@ -47,7 +47,7 @@ class _ProductsPageState extends State<ProductsPage> {
         filteredProducts = mockProducts
             .where((p) =>
         p.categoryId == widget.category.id &&
-            p.name.toLowerCase().contains(query))
+            p!.name.toLowerCase().contains(query))
             .toList();
       }
     });
@@ -95,4 +95,10 @@ class _ProductsPageState extends State<ProductsPage> {
       ),
     );
   }
+}
+
+extension on Object? {
+  get categoryId => null;
+  
+  get name => null;
 }
