@@ -1,0 +1,76 @@
+-- Удаляем таблицы, если они существуют (чтобы избежать ошибок)
+DROP TABLE IF EXISTS cart_items CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Создаем таблицу пользователей
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,                -- Уникальный идентификатор пользователя (auto-increment)
+  email VARCHAR(255) NOT NULL UNIQUE,   -- Email пользователя
+  password VARCHAR(255) NOT NULL        -- Хэшированный пароль пользователя
+);
+
+-- Создаем таблицу категорий
+CREATE TABLE categories (
+  id SERIAL PRIMARY KEY,               -- Уникальный идентификатор категории (auto-increment)
+  name VARCHAR(255) NOT NULL UNIQUE    -- Название категории
+);
+
+-- Создаем таблицу продуктов
+CREATE TABLE products (
+  id SERIAL PRIMARY KEY,               -- Уникальный идентификатор продукта (auto-increment)
+  name VARCHAR(255) NOT NULL,          -- Название продукта
+  price NUMERIC(10, 2) NOT NULL,       -- Цена продукта
+  category_id INT NOT NULL,            -- Внешний ключ на таблицу категорий
+  imageUrl TEXT,                       -- Ссылка на изображение продукта
+  CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
+
+-- Создаем таблицу элементов корзины
+CREATE TABLE cart_items (
+  id SERIAL PRIMARY KEY,               -- Уникальный идентификатор записи корзины (auto-increment)
+  user_id INT NOT NULL,                -- Внешний ключ на таблицу пользователей
+  product_id INT NOT NULL,             -- Внешний ключ на таблицу продуктов
+  quantity INT NOT NULL,               -- Количество товаров
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- Добавляем индексы для оптимизации
+CREATE INDEX idx_products_name ON products (name);
+CREATE INDEX idx_products_category_id ON products (category_id);
+
+-- Пример заполнения данных для тестирования
+
+-- Добавляем пользователей
+INSERT INTO users (email, password)
+VALUES
+('user1@example.com', 'password_hash1'),
+('user2@example.com', 'password_hash2');
+
+-- Добавляем категории
+INSERT INTO categories (name)
+VALUES
+('Корм для животных'),
+('Игрушки для животных'),
+('Уход за животными');
+
+-- Добавляем продукты
+INSERT INTO products (name, price, category_id, imageUrl)
+VALUES
+('Корм для собак', 1200.50, 1, 'https://example.com/dog_food.jpg'),
+('Мяч для собак', 350.00, 2, 'https://example.com/dog_ball.jpg'),
+('Шампунь для кошек', 450.00, 3, 'https://example.com/cat_shampoo.jpg');
+
+-- Добавляем товары в корзину
+INSERT INTO cart_items (user_id, product_id, quantity)
+VALUES
+(1, 1, 2),
+(2, 2, 1);
+
+-- Проверка
+SELECT * FROM users;
+SELECT * FROM categories;
+SELECT * FROM products;
+SELECT * FROM cart_items;

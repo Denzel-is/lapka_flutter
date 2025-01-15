@@ -1,0 +1,63 @@
+drop table users ,categories,products
+-- Создаем таблицу пользователей
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(100)
+);
+
+-- Создаем таблицу категорий
+CREATE TABLE categories (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100)
+);
+
+-- Создаем таблицу продуктов
+CREATE TABLE products (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100),
+  price DECIMAL,
+  image_url TEXT,
+  category_id INT REFERENCES categories(id)
+);
+
+
+-- Вставляем данные в таблицу категорий
+INSERT INTO categories (name) VALUES
+('Корма для животных'),
+('Игрушки для домашних животных'),
+('Амуниция и одежда'),
+('Аквариумы и принадлежности'),
+('Домики и клетки');
+
+-- Вставляем продукты для каждой категории
+
+-- Продукты для "Корма для животных"
+INSERT INTO products (name, price, image_url, category_id) VALUES
+('Корм для собак', 1000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 1),
+('Корм для кошек', 500, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 1),
+('Корм для рыбок', 200, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 1);
+
+-- Продукты для "Игрушки для домашних животных"
+INSERT INTO products (name, price, image_url, category_id) VALUES
+('Игрушка для кошек', 300, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 2),
+('Игрушка для собак', 700, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 2),
+('Игрушка для птиц', 150, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 2);
+
+-- Продукты для "Амуниция и одежда"
+INSERT INTO products (name, price, image_url, category_id) VALUES
+('Одежда для кошек', 1200, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 3),
+('Одежда для собак', 1500, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 3),
+('Ошейник для собак', 300, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 3);
+
+-- Продукты для "Аквариумы и принадлежности"
+INSERT INTO products (name, price, image_url, category_id) VALUES
+('Аквариум', 2000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 4),
+('Фильтр для аквариума', 800, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 4),
+('Освещение для аквариума', 600, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 4);
+
+-- Продукты для "Домики и клетки"
+INSERT INTO products (name, price, image_url, category_id) VALUES
+('Домик для кошек', 1500, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 5),
+('Клетка для птиц', 3000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 5),
+('Клетка для грызунов', 2500, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkBkhP_e3zNM0KWwZV8u_DLr0DRJbKC2Q5Ug&s', 5);
